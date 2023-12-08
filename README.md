@@ -18,3 +18,9 @@ guidelines for creation of meshlets. Using our guidelines we propose two simple 
 generating meshlets that result in good rendering performance, when combined with hardware
 manufactures best practices. Our objective is to make it easier for the graphics practitioner to
 organize a triangle mesh into high performance meshlets. 
+
+## Paper
+Please find the paper describings the details of the different Meshlet generation strategies here: https://jcgt.org/published/0012/02/01/
+
+If you use the work then please cite us:
+Mark Bo Jensen, Jeppe Revall Frisvad, and J. Andreas Bærentzen, Performance Comparison of Meshlet Generation Strategies, Journal of Computer Graphics Techniques (JCGT), vol. 12, no. 2, 1-27, 2023
