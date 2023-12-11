@@ -4,7 +4,7 @@
 #include <queue>
 #include <iostream>
 #include <unordered_map>
-#include<Eigen/Sparse>
+#include <Eigen/Sparse>
 
 namespace NVMeshlet {
 	struct Vertex;

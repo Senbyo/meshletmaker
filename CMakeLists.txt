@@ -4,9 +4,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-project(MeshletMaker VERSION 0.5)
-
 option(BUILD_STANDALONE "Build standalone" TRUE)
+
+if (BUILD_STANDALONE)
+	project(MeshletMaker VERSION 0.5)
+endif()
 
 
 include_directories(
@@ -35,10 +37,10 @@ set(HEADERS
 	core/settings.h
 )
 
-add_library(meshletMaker ${SOURCES} ${HEADERS})
+add_library(meshletmaker ${SOURCES} ${HEADERS})
 
 
-set(TARGETS meshletMaker)
+set(TARGETS meshletmaker)
 
 # Requires glfw3 lib for target platform
 target_link_libraries(
