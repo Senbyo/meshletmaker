@@ -8,33 +8,13 @@
 #include <chrono>
 
 
-int main() {
-	// test standalone capabilities
-	//std::string modelPath =	R"(C:\Users\mboje\OneDrive - Danmarks Tekniske Universitet\currentVersion\engines\JinsokuVR\build\Release\models\wingSmooth.obj)";
-	//std::string modelPath = R"(C:\Users\mboje\OneDrive - Danmarks Tekniske Universitet\currentVersion\engines\meshletgen\Jinsoku\models\wingSmooth.obj)";
-	std::string modelPath = R"(C:\Users\mboje\OneDrive - Danmarks Tekniske Universitet\currentVersion\engines\meshletgen\bunny.obj)";
-	//modelPath = R"(C:\Users\mboje\Documents\jinsoku\Jinsoku\models\lowerpolynobby2.obj)";
-	//std::vector<mm::MeshletGeometry> meshletGeometry32;
-	//std::vector<NVMeshlet::MeshletGeometry16> meshletGeometry;
-	//std::vector<NVMeshlet::Stats> stats;
-	//std::vector<uint32_t> vertCount;
-	//std::vector<mm::Vertex> vertices;
-	//std::vector<mm::ObjectData> objectData;
+int main(int argc, char *argv[]) {
 
-	////mm::createMeshletMeshDescriptors(modelPath, &meshletGeometry32, &vertCount, &vertices, &objectData, &stats, 3);
-	////mm::loadObjAsMeshlet(modelPath, &meshletGeometry32, &vertCount, &vertices, &objectData, &stats);
-
-	////int duplicates = 0;
-	////std::sort(meshletGeometry32[0].vertices.begin(), meshletGeometry32[0].vertices.end());
-	////for (int i = 0; i < meshletGeometry32[0].vertices.size() - 1; i++) {
-	////	if (meshletGeometry32[0].vertices[i] == meshletGeometry32[0].vertices[i + 1]) {
-	////		++duplicates;
-	////		meshletGeometry32[0].vertices.erase(meshletGeometry32[0].vertices.begin() + i);
-	////		--i;
-	////	}
-	////}
-	//std::vector<NVMeshlet::MeshletGeometryPack> meshletGeometryP;
-	//mm::createMeshletPackDescriptors(modelPath, &meshletGeometryP, &vertCount, &vertices, &objectData, &stats, 3);
+	std::string modelPath;
+	if (argc >= 1) {
+		modelPath = argv[1];
+		std::cout << "With model : " << argv[1] << "." << std::endl;
+	}
 
 	std::vector<NVMeshlet::MeshletGeometry16> meshletGeometry;
 	std::vector<NVMeshlet::Stats> stats;
