@@ -23,7 +23,7 @@ add_executable(standalone ${SOURCES} ${HEADERS})
 
 
 target_link_libraries(standalone
-						meshletMaker
+						meshletmaker
 						${SYSTEM_LIBS})
 
 install(TARGETS ${TARGETS} EXPORT meshletMakerTargets
