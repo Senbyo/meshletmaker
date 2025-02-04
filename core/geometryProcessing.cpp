@@ -1,6 +1,7 @@
 #pragma once
 #define TINYOBJLOADER_IMPLEMENTATION
 #define GLM_FORCE_SWIZZLE
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include "meshletMaker.h"
 #include "meshlet_builder.hpp"

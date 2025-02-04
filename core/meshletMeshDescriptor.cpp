@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "meshletMaker.h"
 #include "geometryProcessing.h"
 #include "mm_meshlet_builder.h"
