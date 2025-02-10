@@ -14,7 +14,6 @@
 #include <glm/gtx/hash.hpp>
 #include <iostream>
 #include <unordered_map>
-#include <meshoptimizer.h>
 
 namespace std {
 	template<> struct hash<mm::Vertex> {

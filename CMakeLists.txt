@@ -12,10 +12,8 @@ endif()
 
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/libs/eigen3/
 	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
 	${PROJECT_SOURCE_DIR}/libs/glm/
-    ${PROJECT_SOURCE_DIR}/libs/meshOptimizer/
 )
 
 set(SOURCES
@@ -42,10 +40,9 @@ add_library(meshletmaker ${SOURCES} ${HEADERS})
 
 set(TARGETS meshletmaker)
 
-# Requires glfw3 lib for target platform
+
 target_link_libraries(
 	${TARGETS}
-    ${PROJECT_SOURCE_DIR}/libs/meshOptimizer/meshoptimizer.lib
     )
 
 install(TARGETS ${TARGETS} EXPORT meshletMakerTargets

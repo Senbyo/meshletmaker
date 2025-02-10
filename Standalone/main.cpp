@@ -1,6 +1,5 @@
 #include <tiny_obj_loader.h>
 #include <meshletMaker.h>
-#include <meshoptimizer.h>
 
 #include <algorithm>
 #include <iostream>
@@ -29,7 +28,6 @@ int main(int argc, char *argv[]) {
 
 
 	std::vector<uint32_t> newNewIdxBuffer(indices_model.size(), 0);
-	meshopt_optimizeVertexCache(newNewIdxBuffer.data(), indices_model.data(), indices_model.size(), vertices.size());
 	int strat = 12;
 	std::vector<float> processingTimes;
 	for (int i = 0; i < 10; ++i) {

@@ -8,7 +8,6 @@
 
 
 #include <glm/gtx/transform.hpp>
-#include <meshoptimizer.h>
 #include <functional>
 
 
@@ -88,65 +87,8 @@ namespace mm {
 		MeshletCache<VertexIndexType> cache;
 		cache.reset();
 
-
 		switch (strat) {
-			// zeux's awesome strat!
-		case -2:
-		{
-			// build meshlets based on strategy
-			const size_t max_vertices = vertexLimit;
-			const size_t max_triangles = 124;
-			const float cone_weight = 0.0f;
 
-			size_t max_meshlets = meshopt_buildMeshletsBound(numIndices, max_vertices, max_triangles);
-			std::vector<meshopt_Meshlet> meshlets_meshOpt(max_meshlets);
-			std::vector<unsigned int> meshlet_vertices(max_meshlets * max_vertices);
-			std::vector<unsigned char> meshlet_triangles(max_meshlets * max_triangles * 3);
-
-			size_t meshlet_count = meshopt_buildMeshlets(meshlets_meshOpt.data(), meshlet_vertices.data(), meshlet_triangles.data(), indices,
-				numIndices, &vertices[0].pos.x, numIndices, sizeof(mm::Vertex), max_vertices, max_triangles, cone_weight);
-			//auto stop = std::chrono::high_resolution_clock::now();
-			//auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-			const meshopt_Meshlet& last = meshlets_meshOpt[meshlet_count - 1];
-
-			meshlet_vertices.resize(last.vertex_offset + last.vertex_count);
-			meshlet_triangles.resize(last.triangle_offset + ((last.triangle_count * 3 + 3) & ~3));
-			meshlets_meshOpt.resize(meshlet_count);
-
-			// after generating the meshlets we convert them to our MeshletCache structure
-
-			for (meshopt_Meshlet m : meshlets_meshOpt) {
-				// add actual vertex indices
-				for (int i = 0; i < m.vertex_count; ++i) {
-					uint32_t idx = m.vertex_offset + i;
-					uint32_t vertIdx = meshlet_vertices[idx];
-					cache.vertices[i] = vertIdx;
-					cache.actualVertices[i] = vertices[vertIdx];
-
-
-					cache.numVertexDeltaBits = std::max(findMSB((vertIdx ^ cache.vertices[i]) | 1) + 1, cache.numVertexDeltaBits);
-					cache.numVertexAllBits = std::max(cache.numVertexAllBits, findMSB(vertIdx) + 1);
-
-
-				}
-				// add vertex count and offset
-				cache.numVertices = m.vertex_count;
-
-				// add local vertex indices
-				for (int i = 0; i < m.triangle_count; ++i) {
-					for (int j = 0; j < 3; ++j) {
-						cache.primitives[i][j] = meshlet_triangles[m.triangle_offset + (i * 3) + j];
-					}
-				}
-				// add primitive count
-				cache.numPrims = m.triangle_count;
-
-				assert(cache.fitsBlock());
-				meshlets.push_back(cache);
-				cache.reset();
-			}
-			break;
-		}
 		default:
 
 			for (VertexIndexType i = 0; i < numIndices / 3; i++)
