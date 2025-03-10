@@ -1,20 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
+cmake_policy(SET CMP0177 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-option(BUILD_STANDALONE "Build standalone" TRUE)
+option(BUILD_STANDALONE "Build standalone" FALSE)
+project(meshletmaker VERSION 1.0)
 
-if (BUILD_STANDALONE)
-	project(MeshletMaker VERSION 0.5)
-endif()
-
-
-include_directories(
-	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
-	${PROJECT_SOURCE_DIR}/libs/glm/
-)
 
 set(SOURCES
 	core/geometryProcessing.cpp
@@ -35,27 +28,20 @@ set(HEADERS
 	core/settings.h
 )
 
-add_library(meshletmaker ${SOURCES} ${HEADERS})
+add_library(meshletmaker STATIC ${SOURCES} ${HEADERS})
 
-
-set(TARGETS meshletmaker)
-
-
-target_link_libraries(
-	${TARGETS}
-    )
-
-install(TARGETS ${TARGETS} EXPORT meshletMakerTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+target_include_directories(meshletmaker
+	PRIVATE
+	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
+	${PROJECT_SOURCE_DIR}/libs/glm/
 )
 
-install(FILES 
-	core/meshletMaker.h DESTINATION include ${CMAKE_INSTALL_INCLUDEDIR})
+set(INCLUDES 
+	core/MeshletMaker.h
+	core/settings.h
+)
 
-install(FILES 
-	core/settings.h DESTINATION include ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 if (BUILD_STANDALONE)
 	add_subdirectory(Standalone)
