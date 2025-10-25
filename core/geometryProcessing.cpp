@@ -2062,11 +2062,6 @@ void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::
 	std::string warn, err;
 
 
-	// lets get this from somewhere else so that we can set it in settings
-	glm::mat4 rotation = glm::mat4(1.0f);
-	glm::mat4 scale = glm::mat4(1.0f);
-	glm::mat4 translation = glm::mat4(1.0f);
-
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str())) {
 		throw std::runtime_error(warn + err);
 	}
@@ -2111,9 +2106,9 @@ void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::
 			else {
 				normal = { 1.0f, 1.0f, 1.0f, 0.0f };
 			}
-			// transform pos as a part of the preprocessing
-			vertex.pos = (translation * rotation * scale * pos).xyz();
-			vertex.color = (translation * rotation * scale * normal).xyz();
+
+             vertex.pos = pos;
+             vertex.color = normal;
 
 
 
