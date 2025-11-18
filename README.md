@@ -24,3 +24,16 @@ Please find the paper describings the details of the different Meshlet generatio
 
 If you use the work then please cite us:
 Mark Bo Jensen, Jeppe Revall Frisvad, and J. Andreas Bærentzen, Performance Comparison of Meshlet Generation Strategies, Journal of Computer Graphics Techniques (JCGT), vol. 12, no. 2, 1-27, 2023
+
+## Dependencies
+
+To ensure an easy build process, tiny_obj_loader.h is **vendored** (included directly) in this repository.
+
+This project gratefully acknowledges and uses the following third-party software:
+
+* **[tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)**
+    * **Description:** A header-only Wavefront .obj loader.
+    * **License:** MIT License.
+    * **Location:** Source code and license are located in `libs/tinyobjloader/`.
+
+For full legal details, please refer to the [NOTICE.md](NOTICE.md) file or the specific license files in the `libs/` directory.
