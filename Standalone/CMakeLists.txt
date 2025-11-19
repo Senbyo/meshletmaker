@@ -21,10 +21,17 @@ set(TARGETS standalone)
 
 add_executable(standalone ${SOURCES} ${HEADERS})
 
-
 target_link_libraries(standalone
-						meshletmaker
-						${SYSTEM_LIBS})
+    PRIVATE
+    meshletmaker
+)
+
+if (ENABLE_HIGHFIVE)
+    target_link_libraries(standalone
+        PRIVATE 
+        HighFive::HighFive
+    )
+endif()
 
 install(TARGETS ${TARGETS} EXPORT meshletMakerTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
