@@ -9,7 +9,7 @@ option(ENABLE_HIGHFIVE "Enable HDF5 support via HighFive" FALSE)
 option(BUILD_STANDALONE "Build standalone" FALSE)
 
 if(ENABLE_HIGHFIVE)
-  list(APPEND VCPKG_MANIFEST_FEATURES "hdf5-support")
+	list(APPEND VCPKG_MANIFEST_FEATURES "hdf5-support")
 endif()
 
 project(meshletmaker VERSION 1.0)
@@ -44,7 +44,6 @@ add_library(meshletmaker STATIC ${SOURCES} ${HEADERS})
 target_include_directories(meshletmaker
 	PRIVATE
 	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
-	${PROJECT_SOURCE_DIR}/libs/glm/
 )
 
 target_link_libraries(meshletmaker 
@@ -53,9 +52,8 @@ target_link_libraries(meshletmaker
 )
 
 if (ENABLE_HIGHFIVE)
-    find_package(HighFive CONFIG REQUIRED)
     target_link_libraries(meshletmaker PRIVATE HighFive::HighFive)
-    target_compile_definitions(meshletmaker PRIVATE WITH_HIGHFIVE_SUPPORT)
+    target_compile_definitions(meshletmaker PUBLIC HIGHFIVE_SUPPORT)
 endif()
 
 set(INCLUDES 

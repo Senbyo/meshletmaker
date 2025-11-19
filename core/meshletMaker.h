@@ -16,6 +16,11 @@
 
 namespace mm {
 
+#ifdef HIGHFIVE_SUPPORT
+	void loadHDF5Dataset(const std::string &path, const std::string &dataHandle, std::vector<float> *data_buffer);
+#endif // HIGHFIVE_SUPPORT
+
+
 	void calculateCentroids(std::vector<Triangle*> triangles, const Vertex* vertexBuffer);
 
 	void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::vector<uint32_t>* indices);
