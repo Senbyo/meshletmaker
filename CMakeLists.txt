@@ -5,9 +5,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
+option(ENABLE_HIGHFIVE "Enable HDF5 support via HighFive" FALSE)
 option(BUILD_STANDALONE "Build standalone" FALSE)
+
+if(ENABLE_HIGHFIVE)
+  list(APPEND VCPKG_MANIFEST_FEATURES "hdf5-support")
+endif()
+
 project(meshletmaker VERSION 1.0)
 
+find_package(glm REQUIRED)
+
+if (ENABLE_HIGHFIVE)
+    find_package(HighFive CONFIG REQUIRED)
+endif()
 
 set(SOURCES
 	core/geometryProcessing.cpp
@@ -36,6 +47,17 @@ target_include_directories(meshletmaker
 	${PROJECT_SOURCE_DIR}/libs/glm/
 )
 
+target_link_libraries(meshletmaker 
+	PRIVATE 
+	glm::glm
+)
+
+if (ENABLE_HIGHFIVE)
+    find_package(HighFive CONFIG REQUIRED)
+    target_link_libraries(meshletmaker PRIVATE HighFive::HighFive)
+    target_compile_definitions(meshletmaker PRIVATE WITH_HIGHFIVE_SUPPORT)
+endif()
+
 set(INCLUDES 
 	core/MeshletMaker.h
 	core/settings.h
@@ -45,4 +67,8 @@ install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 if (BUILD_STANDALONE)
 	add_subdirectory(Standalone)
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                 PROPERTY 
+                 VS_STARTUP_PROJECT standalone
+	)
 endif()

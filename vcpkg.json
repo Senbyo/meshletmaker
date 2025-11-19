@@ -1,0 +1,15 @@
+{
+  "name": "meshletmaker",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "glm"
+  ],
+  "features": {
+    "hdf5-support": { 
+      "description": "Enables HighFive for HDF5 model loading.",
+      "dependencies": [
+        "highfive"
+      ]
+    }
+  }
+}
