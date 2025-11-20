@@ -9,11 +9,10 @@ int main(int argc, char *argv[]) {
 	// test
 #ifdef HIGHFIVE_SUPPORT
   std::string filepath = "D:\\process\\stitched\\stylophora1_overview\\stitch_1887-1902_dxchange_recon_8bitbin_2x2x2.h5";
-  std::string dataHandle = "/exchange/data";
-  std::vector<float> data_buffer;
+  std::string dataHandle = "exchange/data_2x2x2";
+  std::vector<uint8_t> data_buffer;
   mm::loadHDF5Dataset(filepath, dataHandle, &data_buffer);
-#endif // HIGHFIVE_SUPPORT
-
+#endif // HIGHFIVE_SUPPORT 
 
 	std::string modelPath;
 	if (argc >= 1) {

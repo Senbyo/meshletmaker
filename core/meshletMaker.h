@@ -17,7 +17,7 @@
 namespace mm {
 
 #ifdef HIGHFIVE_SUPPORT
-	void loadHDF5Dataset(const std::string &path, const std::string &dataHandle, std::vector<float> *data_buffer);
+	void loadHDF5Dataset(const std::string &path, const std::string &dataHandle, std::vector<uint8_t> *data_buffer);
 #endif // HIGHFIVE_SUPPORT
 
 
