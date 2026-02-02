@@ -17,7 +17,20 @@
 namespace mm {
 
 #ifdef HIGHFIVE_SUPPORT
+	enum class VolumeScalarType { UInt8, UInt16, Float32, Unknown };
+
+	struct VolumeInfo {
+	  uint32_t width = 0;
+	  uint32_t height = 0;
+	  uint32_t depth = 0;
+	  VolumeScalarType type = VolumeScalarType::Unknown;
+	  uint32_t bytesPerVoxel = 1;
+	};
+
+	void getHDF5DatasetInfo(const std::string &path, const std::string &dataHandle, VolumeInfo *outInfo);
 	void loadHDF5Dataset(const std::string &path, const std::string &dataHandle, std::vector<uint8_t> *data_buffer);
+	template <typename T>
+	void loadHDF5DatasetQuantized(const std::string &path, const std::string &dataHandle, std::vector<T> *data_buffer, double min_val, double max_val);
 #endif // HIGHFIVE_SUPPORT
 
 
