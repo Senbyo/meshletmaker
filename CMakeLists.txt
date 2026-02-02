@@ -27,6 +27,7 @@ set(SOURCES
 	core/meshletCompresser.cpp
 	core/meshletMeshDescriptor.cpp
 	core/meshletTaskDescriptor.cpp
+	core/volumeProcessing.cpp
 )
 
 set(HEADERS
