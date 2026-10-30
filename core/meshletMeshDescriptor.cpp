@@ -2028,4 +2028,10 @@ namespace mm {
 	}
 }
 
+
+	template void generateMeshlets<uint32_t>(std::unordered_map<unsigned int, Vert*>& indexVertexMap, std::vector<Triangle*>& triangles, std::vector<MeshletCache<uint32_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
+	template void generateMeshlets<uint16_t>(std::unordered_map<unsigned int, Vert*>& indexVertexMap, std::vector<Triangle*>& triangles, std::vector<MeshletCache<uint16_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
+
+	template void generateMeshlets<uint32_t>(const uint32_t* indices, uint32_t numIndices, std::vector<MeshletCache<uint32_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
+	template void generateMeshlets<uint16_t>(const uint16_t* indices, uint32_t numIndices, std::vector<MeshletCache<uint16_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
 }

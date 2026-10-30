@@ -2,6 +2,23 @@
 #include <vector>
 #include <assert.h>
 #include <algorithm>
+#include <cstdint>
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+#pragma intrinsic(_BitScanReverse)
+inline uint32_t findMSB(uint32_t value)
+{
+    unsigned long idx = 0;
+    _BitScanReverse(&idx, value);
+    return idx;
+}
+#else
+inline uint32_t findMSB(uint32_t value)
+{
+    return 31u - static_cast<uint32_t>(__builtin_clz(value));
+}
+#endif
 
 static const int MAX_VERTEX_COUNT_LIMIT = 256;
 static const int MAX_PRIMITIVE_COUNT_LIMIT = 256;
@@ -992,9 +1009,9 @@ namespace mm {
             return (uint32_t)((value >> offset) & ((1 << width) - 1));
         }
 
-        static bool isPrimBeginLegal(uint32_t begin) { return begin / NVMeshlet::PRIMITIVE_PACKING_ALIGNMENT < ((1 << 32) - 1); }
+        static bool isPrimBeginLegal(uint32_t begin) { return begin / NVMeshlet::PRIMITIVE_PACKING_ALIGNMENT < ((1ULL << 32) - 1); }
 
-        static bool isVertexBeginLegal(uint32_t begin) { return begin / NVMeshlet::VERTEX_PACKING_ALIGNMENT < ((1 << 32) - 1); }
+        static bool isVertexBeginLegal(uint32_t begin) { return begin / NVMeshlet::VERTEX_PACKING_ALIGNMENT < ((1ULL << 32) - 1); }
     };
 
     struct MeshletTaskDesc

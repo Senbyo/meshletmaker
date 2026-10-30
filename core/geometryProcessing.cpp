@@ -1,4 +1,3 @@
-#pragma once
 #define TINYOBJLOADER_IMPLEMENTATION
 #define GLM_FORCE_SWIZZLE
 #define GLM_ENABLE_EXPERIMENTAL
@@ -1788,8 +1787,8 @@ namespace mm {
 
 		ObjectData object;
 
-		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 		glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -1832,8 +1831,8 @@ namespace mm {
 
 		ObjectData object;
 
-		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 		glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -1875,8 +1874,8 @@ namespace mm {
 
 		ObjectData object;
 
-		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 		glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -1917,8 +1916,8 @@ namespace mm {
 
 	//	ObjectData object;
 
-	//	object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-	//	object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+	//	object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+	//	object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 	//	glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -1958,8 +1957,8 @@ namespace mm {
 
 		ObjectData object;
 
-		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 		glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -2001,8 +2000,8 @@ namespace mm {
 
 		ObjectData object;
 
-		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], objectBboxMin[3]);
-		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], objectBboxMax[3]);
+		object.bboxMin = glm::vec4(objectBboxMin[0], objectBboxMin[1], objectBboxMin[2], 0.0f);
+		object.bboxMax = glm::vec4(objectBboxMax[0], objectBboxMax[1], objectBboxMax[2], 0.0f);
 
 		glm::vec3 center = glm::vec3((objectBboxMin[0] + objectBboxMax[0]) / 2, (objectBboxMin[1] + objectBboxMax[1]) / 2, (objectBboxMin[2] + objectBboxMax[2]) / 2) * -1.0f;
 
@@ -2126,4 +2125,19 @@ void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::
 	std::cout << vertices->size() << std::endl;
 }
 
+
+	template void makeMesh<uint32_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint32_t* indices);
+	template void makeMesh<uint16_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint16_t* indices);
+
+	template std::vector<NVMeshlet::MeshletGeometryPack> packPackMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
+	template std::vector<NVMeshlet::MeshletGeometryPack> packPackMeshlets<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
+
+	template std::vector<NVMeshlet::MeshletGeometry> packNVMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
+
+	template std::vector<NVMeshlet::MeshletGeometry16> packNVMeshlets16<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
+
+	template std::vector<mm::MeshletGeometry> packMMMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
+
+	template std::vector<mm::MeshletGeometry> packVertMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
+	template std::vector<mm::MeshletGeometry> packVertMeshlets<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
 }

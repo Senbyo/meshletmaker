@@ -46,27 +46,14 @@ because of that includes the original copyright notice
 #include <math.h>
 #include <float.h>
 
+#include "meshlet_builder.hpp"
+#include <iostream>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <random>
 
-#if defined(_MSC_VER)
 
-#pragma intrinsic(_BitScanReverse)
-
-inline uint32_t findMSB(uint32_t value)
-{
-	unsigned long idx = 0;
-	_BitScanReverse(&idx, value);
-	return idx;
-}
-#else
-inline uint32_t findMSB(uint32_t value)
-{
-	uint32_t idx = __builtin_clz(value);
-	return idx;
-}
-#endif
 
 inline uint32_t alignedSize(uint32_t v, uint32_t align) {
   return (v + align - 1) & (~(align-1));
@@ -529,8 +516,8 @@ namespace mm {
 			uint32_t m_primitives = 0;
 
 			void calculateCenter() {};
-			uint32_t primitivesInCluster() { return primitives; }
-			uint32_t vertsInCluster() { return m_vertexIndices.size(); }
+			uint32_t primitivesInCluster() { return m_primitives; }
+			uint32_t vertsInCluster() { return static_cast<uint32_t>(m_verticesIndicies.size()); }
 
 			double euclidian_distance(glm::vec3 point)
 			{
@@ -726,12 +713,12 @@ namespace mm {
 				 int iters = 100;
 				 do {
 					 // iteratively update clusters and assign points to clusters
-					 for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+					 for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 						 c != end(centroids); ++c)
 					 {
 						 int clusterId = c->m_cluster;
 						 int primitiveIndex = 0;
-						 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+						 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 							 it != proxies.end(); ++it) {
 
 							 //double dist = c->euclidian_distance(it->m_barycenter);
@@ -751,7 +738,7 @@ namespace mm {
 					 std::fill(sumY.begin(), sumY.end(), 0);
 					 std::fill(sumZ.begin(), sumZ.end(), 0);
 
-					 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+					 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 						 it != proxies.end(); ++it) {
 
 						 int clusterId = it->m_cluster;
@@ -770,7 +757,7 @@ namespace mm {
 						 //it->m_distance = DBL_MAX;  // reset distance
 					 }
 
-					 for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+					 for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 						 c != end(centroids); ++c)
 					 {
 						 int clusterId = c->m_cluster;
@@ -940,9 +927,9 @@ namespace mm {
 			 };
 
 
-			 inline Vertex* findMaxVertex(std::vector<Vertex*>* vec) {
+			 inline Vert* findMaxVertex(std::vector<Vert*>* vec) {
 				 unsigned int max = 0;
-				 Vertex* res = vec->front();
+				 Vert* res = vec->front();
 				 for (const auto& v : *vec) {
 					 //std::cout << v->degree;
 					 if (v->degree > max) {
@@ -1395,12 +1382,12 @@ namespace mm {
 				// int iters = 10;
 				// do {
 				//	 // iteratively update clusters and assign points to clusters
-				//	 for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+				//	 for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 				//		 c != end(centroids); ++c)
 				//	 {
 				//		 int clusterId = c->m_cluster;
 
-				//		 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//		 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//			 it != proxies.end(); ++it) {
 
 				//			 double dist = c->euclidian_distance(it->m_barycenter);
@@ -1419,7 +1406,7 @@ namespace mm {
 				//	 std::fill(sumY.begin(), sumY.end(), 0);
 				//	 std::fill(sumZ.begin(), sumZ.end(), 0);
 
-				//	 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		 it != proxies.end(); ++it) {
 
 				//		 int clusterId = it->m_cluster;
@@ -1438,7 +1425,7 @@ namespace mm {
 				//		 //it->m_distance = DBL_MAX;  // reset distance
 				//	 }
 
-				//	 for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+				//	 for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 				//		 c != end(centroids); ++c)
 				//	 {
 				//		 int clusterId = c->m_cluster;
@@ -1465,7 +1452,7 @@ namespace mm {
 
 				//	 int clusterId = centroids[i].m_cluster;
 
-				//	 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		 it != proxies.end(); ++it) {
 				//		 if (it->m_cluster == clusterId)
 				//		 {
@@ -1509,7 +1496,7 @@ namespace mm {
 
 				//	 std::vector<TriangleProxy> clusterProxies;
 
-				//	 for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	 for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		 it != proxies.end(); ++it) {
 
 				//		 if (it->m_cluster == clusterId) {
@@ -1539,7 +1526,7 @@ namespace mm {
 
 				//			 TriangleProxy* c = &clusterCenters[i];
 
-				//			 for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				//			 for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				//				 it != clusterProxies.end(); ++it) {
 
 				//				 //double dist = c->euclidian_distance(it->m_barycenter);
@@ -1560,7 +1547,7 @@ namespace mm {
 				//		 std::fill(sumY.begin(), sumY.end(), 0);
 				//		 std::fill(sumZ.begin(), sumZ.end(), 0);
 
-				//		 for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				//		 for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				//			 it != clusterProxies.end(); ++it) {
 
 				//			 int clusterId = it->m_cluster;
@@ -1579,7 +1566,7 @@ namespace mm {
 				//			 //it->m_distance = DBL_MAX;  // reset distance
 				//		 }
 
-				//		 for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+				//		 for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 				//			 c != end(centroids); ++c)
 				//		 {
 				//			 int clusterId = c->m_cluster;
@@ -1602,7 +1589,7 @@ namespace mm {
 
 				//		 int clusterId = clusterCenters[i].m_cluster;
 
-				//		 for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				//		 for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				//			 it != clusterProxies.end(); ++it) {
 				//			 if (it->m_cluster == clusterId)
 				//			 {
@@ -1683,7 +1670,7 @@ namespace mm {
 
 				//	int clusterId = centroids[i].m_cluster;
 
-				//	for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		it != proxies.end(); ++it) {
 				//		if (it->m_cluster == clusterId)
 				//		{
@@ -1723,7 +1710,7 @@ namespace mm {
 
 				//	std::vector<TriangleProxy> clusterProxies;
 
-				//	for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		it != proxies.end(); ++it) {
 
 				//		if (it->m_cluster == clusterId) {
@@ -1753,7 +1740,7 @@ namespace mm {
 
 				////			TriangleProxy* c = &clusterCenters[i];
 
-				////			for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				////			for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				////				it != clusterProxies.end(); ++it) {
 
 				////				//double dist = c->euclidian_distance(it->m_barycenter);
@@ -1774,7 +1761,7 @@ namespace mm {
 				////		std::fill(sumY.begin(), sumY.end(), 0);
 				////		std::fill(sumZ.begin(), sumZ.end(), 0);
 
-				////		for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				////		for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				////			it != clusterProxies.end(); ++it) {
 
 				////			int clusterId = it->m_cluster;
@@ -1793,7 +1780,7 @@ namespace mm {
 				////			//it->m_distance = DBL_MAX;  // reset distance
 				////		}
 
-				////		for (std::vector<TriangleProxy>::iterator c = begin(centroids);
+				////		for (typename std::vector<TriangleProxy>::iterator c = begin(centroids);
 				////			c != end(centroids); ++c)
 				////		{
 				////			int clusterId = c->m_cluster;
@@ -1817,7 +1804,7 @@ namespace mm {
 
 				//		int clusterId = clusterCenters[i].m_cluster;
 
-				//		for (std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
+				//		for (typename std::vector<TriangleProxy>::iterator it = clusterProxies.begin();
 				//			it != clusterProxies.end(); ++it) {
 				//			if (it->m_cluster == clusterId)
 				//			{
@@ -1921,7 +1908,7 @@ namespace mm {
 
 				//	int clusterId = centroids[i].m_cluster;
 
-				//	for (std::vector<TriangleProxy>::iterator it = proxies.begin();
+				//	for (typename std::vector<TriangleProxy>::iterator it = proxies.begin();
 				//		it != proxies.end(); ++it) {
 				//		if (it->m_cluster == clusterId)
 				//		{

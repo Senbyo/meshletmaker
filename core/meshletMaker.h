@@ -23,48 +23,28 @@ namespace mm {
 	template <class VertexIndexType>
 	void makeMesh(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const VertexIndexType* indices);
 
-	template void makeMesh<uint32_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint32_t* indices);
-	template void makeMesh<uint16_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint16_t* indices);
-
 	template <class VertexIndexType>
 	void generateMeshlets(std::unordered_map<unsigned int, Vert*>& indexVertexMap, std::vector<Triangle*>& triangles, std::vector<MeshletCache<VertexIndexType>>& mehslets, const Vertex* vertices, int strat = -1, uint32_t primitiveLimit = 125, uint32_t vertexLimit = 64);
 	
 	void tipsifyIndexBuffer(const uint32_t* indicies, const uint32_t numIndices, const uint32_t numVerts, const int cacheSize, std::vector<uint32_t>& optimizedIdxBuffer);
 
-	template void generateMeshlets<uint32_t>(std::unordered_map<unsigned int, Vert*>& indexVertexMap, std::vector<Triangle*>& triangles, std::vector<MeshletCache<uint32_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
-	template void generateMeshlets<uint16_t>(std::unordered_map<unsigned int, Vert*>& indexVertexMap, std::vector<Triangle*>& triangles, std::vector<MeshletCache<uint16_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
-
 	template <class VertexIndexType>
 	void generateMeshlets(const VertexIndexType* indices, uint32_t numIndices, std::vector<MeshletCache<VertexIndexType>>& mehslets, const Vertex* vertices, int strat = -1, uint32_t primitiveLimit = 125, uint32_t vertexLimit = 64);
-
-	template void generateMeshlets<uint32_t>(const uint32_t* indices, uint32_t numIndices, std::vector<MeshletCache<uint32_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
-	template void generateMeshlets<uint16_t>(const uint16_t* indices, uint32_t numIndices, std::vector<MeshletCache<uint16_t>>& mehslets, const Vertex* vertices, int strat, uint32_t primitiveLimit, uint32_t vertexLimit);
-
 
 	template <class VertexIndexType>
 	std::vector<NVMeshlet::MeshletGeometryPack> packPackMeshlets(const std::vector<MeshletCache<VertexIndexType>>& mehslets);
 
-	template std::vector<NVMeshlet::MeshletGeometryPack> packPackMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
-	template std::vector<NVMeshlet::MeshletGeometryPack> packPackMeshlets<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
-
 	template <class VertexIndexType>
 	std::vector<NVMeshlet::MeshletGeometry> packNVMeshlets(const std::vector<MeshletCache<VertexIndexType>>& mehslets);
 
-	template std::vector<NVMeshlet::MeshletGeometry> packNVMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
-
 	template <class VertexIndexType>
 	std::vector<NVMeshlet::MeshletGeometry16> packNVMeshlets16(const std::vector<MeshletCache<VertexIndexType>>& mehslets);
-	template std::vector<NVMeshlet::MeshletGeometry16> packNVMeshlets16<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
 
 	template <class VertexIndexType>
 	std::vector<mm::MeshletGeometry> packMMMeshlets(const std::vector<MeshletCache<VertexIndexType>>& mehslets);
-	template std::vector<mm::MeshletGeometry> packMMMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
 
 	template <class VertexIndexType>
 	std::vector<mm::MeshletGeometry> packVertMeshlets(const std::vector<MeshletCache<VertexIndexType>>& mehslets);
-
-	template std::vector<mm::MeshletGeometry> packVertMeshlets<uint32_t>(const std::vector<MeshletCache<uint32_t>>& mehslets);
-	template std::vector<mm::MeshletGeometry> packVertMeshlets<uint16_t>(const std::vector<MeshletCache<uint16_t>>& mehslets);
 
 	void collectStats(const NVMeshlet::MeshletGeometryPack& geometry, std::vector<NVMeshlet::Stats>& stats);
 	void generateEarlyCulling(NVMeshlet::MeshletGeometryPack& geometry, const std::vector<Vertex>& vertices, std::vector<ObjectData>& objectData);
