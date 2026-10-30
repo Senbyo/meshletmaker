@@ -5,20 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SUPPRESS_REGENERATION true)
 
-option(ENABLE_HIGHFIVE "Enable HDF5 support via HighFive" FALSE)
 option(BUILD_STANDALONE "Build standalone" FALSE)
-
-if(ENABLE_HIGHFIVE)
-	list(APPEND VCPKG_MANIFEST_FEATURES "hdf5-support")
-endif()
 
 project(meshletmaker VERSION 1.0)
 
 find_package(glm REQUIRED)
-
-if (ENABLE_HIGHFIVE)
-    find_package(HighFive CONFIG REQUIRED)
-endif()
 
 set(SOURCES
 	core/geometryProcessing.cpp
@@ -27,7 +18,6 @@ set(SOURCES
 	core/meshletCompresser.cpp
 	core/meshletMeshDescriptor.cpp
 	core/meshletTaskDescriptor.cpp
-	core/volumeProcessing.cpp
 )
 
 set(HEADERS
@@ -45,6 +35,8 @@ add_library(meshletmaker STATIC ${SOURCES} ${HEADERS})
 target_include_directories(meshletmaker
 	PRIVATE
 	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/core
 )
 
 target_link_libraries(meshletmaker 
@@ -52,13 +44,8 @@ target_link_libraries(meshletmaker
 	glm::glm
 )
 
-if (ENABLE_HIGHFIVE)
-    target_link_libraries(meshletmaker PRIVATE HighFive::HighFive)
-    target_compile_definitions(meshletmaker PUBLIC HIGHFIVE_SUPPORT)
-endif()
-
 set(INCLUDES 
-	core/MeshletMaker.h
+	core/meshletMaker.h
 	core/settings.h
 )
 

@@ -26,13 +26,6 @@ target_link_libraries(standalone
     meshletmaker
 )
 
-if (ENABLE_HIGHFIVE)
-    target_link_libraries(standalone
-        PRIVATE 
-        HighFive::HighFive
-    )
-endif()
-
 install(TARGETS ${TARGETS} EXPORT meshletMakerTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
