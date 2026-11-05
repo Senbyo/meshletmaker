@@ -13,6 +13,8 @@
 #include <glm/gtx/hash.hpp>
 #include <iostream>
 #include <unordered_map>
+#include <map>
+#include <algorithm>
 
 namespace std {
 	template<> struct hash<mm::Vertex> {
@@ -2053,78 +2055,128 @@ namespace mm {
 		std::cout << "Number of cullable meshlets: " << stat.backfaceTotal << " out of " << stat.meshletsTotal << " meshlets." << std::endl;
 	}
 
-void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::vector<uint32_t>* indices) {
-
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string warn, err;
-
-
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str())) {
-		throw std::runtime_error(warn + err);
-	}
-
-	std::cout << "Number of verts: " << attrib.vertices.size() / 3 << std::endl;
-	std::cout << "Number of triangles: " << shapes[0].mesh.indices.size() / 3 << std::endl;
-
-	std::unordered_map<Vertex, uint32_t> uniqueVertices = {};
-
-	for (const auto& shape : shapes) {
-		for (const auto& index : shape.mesh.indices) {
+	namespace {
+		// Shared helper: builds a Vertex from a tinyobj index and deduplicates it into (vertices, indices)
+		void appendTinyObjVertex(
+			const tinyobj::attrib_t& attrib,
+			const tinyobj::index_t& index,
+			std::unordered_map<Vertex, uint32_t>& uniqueVertices,
+			std::vector<Vertex>& vertices,
+			std::vector<uint32_t>& indices)
+		{
 			Vertex vertex = {};
 
-			glm::vec4 pos = glm::vec4(
+			vertex.pos = glm::vec4(
 				attrib.vertices[3 * index.vertex_index + 0],
 				attrib.vertices[3 * index.vertex_index + 1],
 				attrib.vertices[3 * index.vertex_index + 2],
-				1.0
+				1.0f
 			);
 
-			if (attrib.texcoords.size() > 0)
-			{
+			if (index.texcoord_index >= 0 && !attrib.texcoords.empty()) {
 				vertex.texCoord = {
 					attrib.texcoords[2 * index.texcoord_index + 0],
 					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
 				};
 			}
-			glm::vec4 normal;
-			if (attrib.normals.size() > 0) {
-				//vertex.color = {
-				//	attrib.normals[3 * index.normal_index + 0],
-				//	attrib.normals[3 * index.normal_index + 1],
-				//	attrib.normals[3 * index.normal_index + 2],
-				//};
-				normal = {
+
+			if (index.normal_index >= 0 && !attrib.normals.empty()) {
+				vertex.color = {
 					attrib.normals[3 * index.normal_index + 0],
 					attrib.normals[3 * index.normal_index + 1],
-					attrib.normals[3 * index.normal_index + 2],
-					0.0f
+					attrib.normals[3 * index.normal_index + 2]
 				};
 			}
 			else {
-				normal = { 1.0f, 1.0f, 1.0f, 0.0f };
+				vertex.color = { 0.0f, 1.0f, 0.0f};
 			}
 
-             vertex.pos = pos;
-             vertex.color = normal;
-
-
-
-			if (uniqueVertices.count(vertex) == 0) {
-				uniqueVertices[vertex] = static_cast<uint32_t>(vertices->size());
-
-				vertices->push_back(vertex);
+			auto [it, inserted] = uniqueVertices.try_emplace(
+				vertex, static_cast<uint32_t>(vertices.size()));
+			if (inserted) {
+				vertices.push_back(vertex);
 			}
-			//vertices->push_back(vertex);
-			//indices->push_back(indices->size());
-			indices->push_back(uniqueVertices[vertex]);
-
+			indices.push_back(it->second);
 		}
 	}
-	std::cout << vertices->size() << std::endl;
-}
 
+	// Overload 1: Flat single-mesh load (used by Standalone meshletmaker tools)
+	void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::vector<uint32_t>* indices) {
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string warn, err;
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str())) {
+			throw std::runtime_error(warn + err);
+		}
+
+		std::unordered_map<Vertex, uint32_t> uniqueVertices;
+		for (const auto& shape : shapes) {
+			for (const auto& index : shape.mesh.indices) {
+				appendTinyObjVertex(attrib, index, uniqueVertices, *vertices, *indices);
+			}
+		}
+	}
+
+	// Overload 2: Submesh + .mtl material load (used by Jinsoku ResourceManager)
+	void loadTinyModel(const std::string& path, std::vector<SubMesh>& outSubmeshes) {
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string warn, err;
+
+		std::string mtlBaseDir = "";
+		size_t lastSlash = path.find_last_of("/\\");
+		if (lastSlash != std::string::npos) {
+			mtlBaseDir = path.substr(0, lastSlash + 1);
+		}
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), mtlBaseDir.c_str(), true)) {
+			throw std::runtime_error(warn + err);
+		}
+		if (!warn.empty()) {
+			std::cout << "[TinyObj Warning] " << warn << std::endl;
+		}
+
+		std::map<int, SubMesh> matBuckets;
+		std::map<int, std::unordered_map<Vertex, uint32_t>> uniqueVertsPerBucket;
+
+		for (const auto& shape : shapes) {
+			size_t indexOffset = 0;
+			for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
+				size_t fv = shape.mesh.num_face_vertices[f];
+				int matId = (f < shape.mesh.material_ids.size()) ? shape.mesh.material_ids[f] : -1;
+
+				auto& bucket = matBuckets[matId];
+				auto& uniqueVertices = uniqueVertsPerBucket[matId];
+
+				for (size_t v = 0; v < fv; v++) {
+					appendTinyObjVertex(
+						attrib,
+						shape.mesh.indices[indexOffset + v],
+						uniqueVertices,
+						bucket.vertices,
+						bucket.indices);
+				}
+				indexOffset += fv;
+			}
+		}
+
+		for (auto& [matId, submesh] : matBuckets) {
+			if (matId >= 0 && matId < static_cast<int>(materials.size())) {
+				const auto& mat = materials[matId];
+				submesh.materialName = mat.name;
+
+				std::string texName = mat.diffuse_texname;
+				if (!texName.empty()) {
+					std::replace(texName.begin(), texName.end(), '\\', '/');
+					submesh.diffuseTexPath = mtlBaseDir + texName;
+				}
+			}
+			outSubmeshes.push_back(std::move(submesh));
+		}
+	}
 
 	template void makeMesh<uint32_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint32_t* indices);
 	template void makeMesh<uint16_t>(std::unordered_map<unsigned int, Vert*>* indexVertexMap, std::vector<Triangle*>* triangles, const uint32_t numIndices, const uint16_t* indices);

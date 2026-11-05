@@ -48,7 +48,6 @@ namespace NVMeshlet {
         KMEANSU
     };
 
-
     struct Stats
     {
         size_t meshletsTotal = 0;
@@ -647,21 +646,6 @@ namespace NVMeshlet {
 
 
 namespace mm {
-
-
-
-    // must match cadscene!
-    struct ObjectData {
-        glm::mat4 worldMatrix;
-        glm::mat4 worldMatrixIT;
-        glm::mat4 objectMatrix;
-        glm::vec4 bboxMin;
-        glm::vec4 bboxMax;
-        glm::vec3 _pad0;
-        float winding;
-        glm::vec4 color;
-    };
-
     struct Vertex {
         glm::vec3 pos;
         glm::vec3 color;
@@ -676,8 +660,29 @@ namespace mm {
         }
 
         float euclideanDistance(const Vertex& other) const {
-            return std::sqrt(std::pow(other.pos.x - pos.x,2) + std::pow(other.pos.y - pos.y, 2) + std::pow(other.pos.z - pos.z, 2));
+            return std::sqrt(std::pow(other.pos.x - pos.x, 2) + std::pow(other.pos.y - pos.y, 2) + std::pow(other.pos.z - pos.z, 2));
         }
+    };
+
+    struct SubMesh {
+        std::string name;
+        std::string materialName;
+        std::string diffuseTexPath;
+        glm::mat4 localTransform{ 1.0f };
+        std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
+    };
+
+    // must match cadscene!
+    struct ObjectData {
+        glm::mat4 worldMatrix;
+        glm::mat4 worldMatrixIT;
+        glm::mat4 objectMatrix;
+        glm::vec4 bboxMin;
+        glm::vec4 bboxMax;
+        glm::vec3 _pad0;
+        float winding;
+        glm::vec4 color;
     };
 
     struct Vert;

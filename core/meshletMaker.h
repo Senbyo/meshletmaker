@@ -15,6 +15,8 @@
 
 
 namespace mm {
+	void loadTinyModel(const std::string& path, std::vector<Vertex>* vertices, std::vector<uint32_t>* indices);
+	void loadTinyModel(const std::string& path, std::vector<SubMesh>& outSubmeshes);
 
 	void calculateCentroids(std::vector<Triangle*> triangles, const Vertex* vertexBuffer);
 
