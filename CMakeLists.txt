@@ -45,6 +45,8 @@ add_library(meshletmaker STATIC ${SOURCES} ${HEADERS})
 target_include_directories(meshletmaker
 	PRIVATE
 	${PROJECT_SOURCE_DIR}/libs/tinyobjloader/
+	PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/core
 )
 
 target_link_libraries(meshletmaker 
